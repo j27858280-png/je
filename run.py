@@ -1,4 +1,5 @@
 import os
+import click
 from app import create_app, db
 from app.models import User
 
@@ -15,13 +16,11 @@ def init_db():
     print('Database initialized.')
 
 @app.cli.command()
-def create_admin():
+@click.option('--username', prompt='Enter admin username', help='Admin username')
+@click.option('--email', prompt='Enter admin email', help='Admin email')
+@click.option('--password', prompt='Enter admin password', hide_input=True, confirmation_prompt=True, help='Admin password')
+def create_admin(username, email, password):
     """Create an admin user."""
-    from getpass import getpass
-    username = input('Enter admin username: ')
-    email = input('Enter admin email: ')
-    password = getpass('Enter admin password: ')
-    
     if User.query.filter_by(username=username).first():
         print('Admin user already exists!')
         return
