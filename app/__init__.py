@@ -28,7 +28,15 @@ def create_app(config_name='development'):
             db.create_all()
             
             # Create default admin if none exists
-            if not User.query.filter_by(is_admin=True).first():
+            admin_user = User.query.filter_by(username='admin').first()
+            if admin_user:
+                # Ensure existing admin has proper permissions
+                if not admin_user.is_admin:
+                    admin_user.is_admin = True
+                    db.session.commit()
+                    print("Existing admin permissions fixed")
+            else:
+                # Create new default admin
                 default_admin = User(
                     username='admin',
                     email='admin@worker-management.com',
