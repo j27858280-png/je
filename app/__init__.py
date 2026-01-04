@@ -11,6 +11,13 @@ def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     
+    # Ensure database is in instance folder for persistence
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:///:memory:'):
+        print("⚠️  تحذير: تستخدم قاعدة بيانات في الذاكرة! البيانات ستُحذف عند إيقاف التطبيق.")
+        print("   تأكد من تعيين FLASK_ENV=development أو إزالة DATABASE_URL من متغيرات البيئة.")
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.instance_path}/worker_management.db'
+    
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
