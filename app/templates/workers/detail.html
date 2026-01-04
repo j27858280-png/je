@@ -49,6 +49,7 @@
                                 <th>الساعات</th>
                                 <th>التاريخ</th>
                                 <th>ملاحظات</th>
+                                <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,6 +62,20 @@
                                 <td>{{ shift.hours }}</td>
                                 <td>{{ shift.date.strftime('%Y-%m-%d') }}</td>
                                 <td>{{ shift.notes or '-' }}</td>
+                                <td>
+                                    {% if current_user.has_permission('edit_workers') %}
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('workers.edit_shift', worker_id=worker.id, shift_id=shift.id) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('workers.delete_shift', worker_id=worker.id, shift_id=shift.id) }}" style="display: inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذه النوبة؟')">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>

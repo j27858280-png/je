@@ -204,6 +204,59 @@ def add_shift(worker_id):
     product_types = ProductType.query.all()
     return render_template('workers/add_shift.html', worker=worker, product_types=product_types)
 
+@workers_bp.route('/<int:worker_id>/edit_shift/<int:shift_id>', methods=['GET', 'POST'])
+@login_required
+@require_permission('edit_workers')
+def edit_shift(worker_id, shift_id):
+    worker = Worker.query.get_or_404(worker_id)
+    shift = WorkShift.query.get_or_404(shift_id)
+    
+    # Ensure shift belongs to worker
+    if shift.worker_id != worker_id:
+        flash('النوبة لا تنتمي لهذا العامل', 'danger')
+        return redirect(url_for('workers.worker_detail', worker_id=worker_id))
+    
+    if request.method == 'POST':
+        old_hours = shift.hours
+        shift.shift_type = request.form.get('shift_type')
+        shift.location = request.form.get('location')
+        shift.product_type_id = request.form.get('product_type_id') or None
+        shift.work_type = request.form.get('work_type')
+        shift.hours = float(request.form.get('hours', 0))
+        shift.date = datetime.strptime(request.form.get('date'), '%Y-%m-%d')
+        shift.notes = request.form.get('notes')
+        
+        # Update worker's total hours
+        worker.total_hours = worker.total_hours - old_hours + shift.hours
+        
+        db.session.commit()
+        flash('تم تحديث النوبة بنجاح', 'success')
+        return redirect(url_for('workers.worker_detail', worker_id=worker_id))
+    
+    product_types = ProductType.query.all()
+    return render_template('workers/edit_shift.html', worker=worker, shift=shift, product_types=product_types)
+
+@workers_bp.route('/<int:worker_id>/delete_shift/<int:shift_id>', methods=['POST'])
+@login_required
+@require_permission('edit_workers')
+def delete_shift(worker_id, shift_id):
+    worker = Worker.query.get_or_404(worker_id)
+    shift = WorkShift.query.get_or_404(shift_id)
+    
+    # Ensure shift belongs to worker
+    if shift.worker_id != worker_id:
+        flash('النوبة لا تنتمي لهذا العامل', 'danger')
+        return redirect(url_for('workers.worker_detail', worker_id=worker_id))
+    
+    # Update worker's total hours
+    worker.total_hours -= shift.hours
+    
+    db.session.delete(shift)
+    db.session.commit()
+    
+    flash('تم حذف النوبة بنجاح', 'success')
+    return redirect(url_for('workers.worker_detail', worker_id=worker_id))
+
 # ==================== Production Routes ====================
 @production_bp.route('/')
 @login_required
