@@ -11,6 +11,8 @@ def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     
+    print(f"Using DATABASE_URL: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+    
     # Ensure database is in instance folder for persistence
     if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:///:memory:'):
         print("⚠️  تحذير: تستخدم قاعدة بيانات في الذاكرة! البيانات ستُحذف عند إيقاف التطبيق.")
