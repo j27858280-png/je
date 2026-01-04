@@ -38,7 +38,7 @@ https://render.com
      - **Name**: worker-management
      - **Runtime**: Python 3
      - **Build Command**: `pip install -r requirements.txt`
-     - **Start Command**: `gunicorn run:app`
+     - **Start Command**: `python run.py`
    - اضغط "Create Web Service"
 
 5. **إضافة متغيرات البيئة**
