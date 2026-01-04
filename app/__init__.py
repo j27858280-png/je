@@ -27,6 +27,18 @@ def create_app(config_name='development'):
             # Create tables
             db.create_all()
             
+            # Create default admin if none exists
+            if not User.query.filter_by(is_admin=True).first():
+                default_admin = User(
+                    username='admin',
+                    email='admin@worker-management.com',
+                    is_admin=True
+                )
+                default_admin.set_password('admin123')
+                db.session.add(default_admin)
+                db.session.commit()
+                print("Default admin created: username='admin', password='admin123'")
+            
             # Register blueprints
             from app.routes import (main_bp, auth_bp, workers_bp, production_bp, 
                                     sales_bp, fuel_bp, medicines_bp, consumption_bp, 
