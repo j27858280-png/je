@@ -22,7 +22,16 @@ https://render.com
    git push -u origin main
    ```
 
-3. **إنشاء Web Service على Render**
+3. **إنشاء قاعدة بيانات PostgreSQL**
+   - اضغط على "New +" > "PostgreSQL"
+   - املأ التفاصيل:
+     - **Name**: worker-management-db
+     - **Database**: worker_management
+     - **User**: worker_user
+   - اضغط "Create Database"
+   - انتظر حتى تُنشأ، ثم انسخ **Internal Database URL**
+
+4. **إنشاء Web Service على Render**
    - اضغط على "New +" > "Web Service"
    - اختر مستودع GitHub
    - املأ التفاصيل:
@@ -32,12 +41,13 @@ https://render.com
      - **Start Command**: `gunicorn run:app`
    - اضغط "Create Web Service"
 
-4. **إضافة متغيرات البيئة**
-   - في لوحة التحكم، اذهب إلى "Environment"
+5. **إضافة متغيرات البيئة**
+   - في لوحة التحكم للـ Web Service، اذهب إلى "Environment"
    - أضف:
      ```
      SECRET_KEY=your-super-secret-key-here
      FLASK_ENV=production
+     DATABASE_URL=postgresql://worker_user:password@host:5432/worker_management  # استبدل بالـ Internal Database URL
      ```
 
 5. **إنشاء المسؤول (Admin)**
