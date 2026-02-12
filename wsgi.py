@@ -9,13 +9,17 @@
 import sys
 import os
 
-# assuming the app is in a subdirectory called 'app'
+# Add the current directory to the path
 path = os.path.dirname(os.path.abspath(__file__))
 if path not in sys.path:
     sys.path.insert(0, path)
 
-os.environ['FLASK_ENV'] = 'production'
+# Set environment variables for production with SQLite
+os.environ.setdefault('FLASK_ENV', 'production')
+os.environ.setdefault('DATABASE_URL', f'sqlite:///{path}/instance/worker_management.db')
+os.environ.setdefault('SECRET_KEY', 'your-super-secret-key-change-in-production')
 
+# Import the Flask application
 from run import app as application
 
 # For debugging, you can uncomment the following lines:
