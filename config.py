@@ -18,16 +18,6 @@ class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
     TESTING = False
-    
-    @property
-    def SQLALCHEMY_DATABASE_URI(self):
-        db_url = os.environ.get('DATABASE_URL')
-        if not db_url:
-            raise ValueError("DATABASE_URL environment variable is required for production")
-        # Use psycopg3 for PostgreSQL
-        if db_url.startswith('postgresql://'):
-            db_url = db_url.replace('postgresql://', 'postgresql+psycopg://', 1)
-        return db_url
 
 class TestingConfig(Config):
     """Testing configuration"""
